@@ -1,9 +1,9 @@
 """
-    arrival_prop_funcs(B::Function,C::Function,sb::Float64, sc::Float64)
+    arrival_prop_funcs(B::Function,C::Function)
 
-takes functions B and C describing the joint in/out degree distributions for consumers and resources and returns the functions to calculate the probability of arriving at a surviving node. 
+takes functions B and C describing the joint in/out degree distributions for consumers and resources and returns the functions to calculate the probability of arriving at a surviving node.
 """
-function arrival_prop_funcs(B::Function,C::Function,sb::Float64, sc::Float64)
+function arrival_prop_funcs(B::Function,C::Function)
     #get required functions
     #derivatives evaluated at 1
     dBY(X) = ForwardDiff.gradient(B, [X, 1.0])[2] #Ko * P(Ki,Ko) * X^Ki
@@ -17,8 +17,8 @@ function arrival_prop_funcs(B::Function,C::Function,sb::Float64, sc::Float64)
     C1_I(X) = dCY(X) / dCY(1.0)
 
     #actual probability functions
-    fb(c1) = sb + B1_I(c1)*(1-sb)
-    fc(b1) = 1 - C1_I(1-b1)*(1-sc)
+    fb(c1) = B1_I(c1)
+    fc(b1) = 1 - C1_I(1-b1)
 
     return Dict(:b => fb, :c => fc)
 end
@@ -28,16 +28,14 @@ end
 
 Solve the eqations B and C to get the solutions for survivng propotions. Also accepts arguments sb and sc for the proportion of supplied resources or consumers.
 """
-function solve_arrival_probs(B,C,sb = 0.0,sc = 0.0)
-    f_sol = arrival_prop_funcs(B,C,sb,sc)
-    
-    x_vec = range(-0,1,length = 100)
-    
+function solve_arrival_probs(B,C)
+    f_sol = arrival_prop_funcs(B,C)
+        
     b1(x) = f_sol[:b](f_sol[:c](x)) - x
-    b1_sols = Roots.find_zeros(b1, -0.0, 1.0)
+    b1_sols = Roots.find_zeros(b1, 0.0, 1.0)
     c1_sols = f_sol[:c].(b1_sols)
-    b0_sols = [sb + (1-sb) * B([c, 1]) for c = c1_sols]
-    c0_sols = [1 - C([1 - b, 1])*(1-sc) for b = b1_sols]
+    b0_sols = [ B([c, 1]) for c = c1_sols]
+    c0_sols = [1 - C([1 - b, 1]) for b = b1_sols]
 
     return b0_sols, c0_sols
 end

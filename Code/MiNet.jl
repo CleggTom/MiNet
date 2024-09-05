@@ -11,5 +11,6 @@ module MiNet
     include("./networks.jl")
     include("./dynamics.jl")
     include("./utils.jl")
+    include("./powerlaw.jl")
 
 end

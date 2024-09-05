@@ -59,12 +59,12 @@ function joint_sample_cheat(N::Int64,λn::Float64,λp::Float64,λr::Float64)
 end
 
 """
-    generate_network(N,λn,λp,λr)
+    generate_network(N,f, p...)
 
-Generate random network with component sizes N from given rates.
+Generate random network with component sizes N drawing the joint degrees from function f with parameters p.
 """
-function generate_network(N::Int64,λn::Float64,λp::Float64,λr::Float64)
-    Kbi, Kbo, Kci, Kco = joint_sample_cheat(N,λn,λp,λr)
+function generate_network(N::Int64, f::Function, p...)
+    Kbi, Kbo, Kci, Kco = f(N,p...)
     
     # println(mean(Kbi)," ",mean(Kco))
     # println(mean(Kbo)," ",mean(Kci))
@@ -115,21 +115,21 @@ Updates node states using simple rules. Consumers survive when all resources are
 function update_state!(g::SimpleDiGraph{T}, s::Vector{Bool}, c::Vector{Bool},sfix::Vector{Bool} = fill(false, nv(g))) where T <: Int
     for i = shuffle(1:nv(g))
             if sfix[i]
-                ds[i] = 1
+                s[i] = 1
             else
                 if c[i]
                     # println("con")
-                    @views s[i] = all(s[g.badjlist[i]]) 
+                    @views s[i] = sum(s[g.badjlist[i]]) >= indegree(g)[i]
                 else
                     # println("res")
-                    @views s[i] = any(s[g.badjlist[i]])
+                    @views s[i] = any(s[g.badjlist[i]]) 
                 end
             end
         end
 end
 
 """
-    get_state(g,N,sb = 0.0,sc = 0.0; Nt = 100, ts = false)
+    get_state(g::SimpleDiGraph{T}, c::Vector{Bool}, ps::Float64; Nt = 100, ts = false) where T <: Int
 
 Initialise a network and itteratively solve for the steady state. Uses `update_state!` to update dynamics. Returns the state vector and the timeseries if `ts = true`
 
@@ -204,6 +204,77 @@ function graphviz(g,s,c,graph_dir, img_dir)
                 write(file, "    $i -> $j [penwidth = 1.0, arrowsize=1];\n")
             else
                 write(file, "    $i -> $j [penwidth = 0.1, arrowsize=0];\n")
+            end
+        end
+    
+        write(file, "}")
+    end
+    
+    run(pipeline(`dot -Tpdf $graph_dir`, stdout=img_dir))
+end
+
+"""
+    graphviz_bipartite(g,s,c,graph_dir, img_dir)
+
+Visualise bipartite network
+"""
+function graphviz_bipartite(g,s,c,graph_dir, img_dir)
+    con = "#ff1010"
+    con_ext = "#ffe8e8"
+    
+    res = "#6495ed"
+    res_ext = "#f1f5fd"
+    
+    #write graph
+    open(graph_dir, "w") do file
+        write(file, "digraph {\n")
+        write(file, "layout=\"neato\";\n")
+        # write(file, "overlap=\"false\";\n")
+        write(file, "pack=true;\n")
+        write(file, "packmode=\"array_u\";\n")
+        write(file, "outputorder=\"edgesfirst\";\n")
+
+        ind = 1:length(s)
+        
+        kb = 0
+        kc = 0
+
+        nB = sum(c)
+        nC = length(c) - nB
+        
+        for n in ind  # add nodes
+            if !c[n]
+                char = s[n] == 1 ? res : res_ext
+                posx = 10 * (kc / nC)
+                posy = 0
+                
+                println(posx)
+                println(posy)
+                
+                kc += 1
+            else
+                char = s[n] == 1 ? con : con_ext
+                posx = 10 * (kb / nB)
+                posy = 1
+                kb += 1
+            end
+             write(file, "    $n [fillcolor=\"$char\",
+                shape=\"circle\",
+                style = \"filled\",
+                width = 0.1,
+                penwidth = 0,
+                label=\"\",
+                pos=\"$(posx),$(posy)!\"];\n")
+        end
+    
+        for e in edges(g)  # add edges
+            i=src(e); j=dst(e)
+
+            t = c[i] == 1 ? "solid" : "dashed"
+            if (s[i] == 1) && (s[j] == 1)
+                write(file, "    $i -> $j [penwidth = 0.2, arrowsize=0.1, style = $(t)];\n")
+            else
+                write(file, "    $i -> $j [penwidth = 0.0, arrowsize=0, style = $(t)];\n")
             end
         end
     
