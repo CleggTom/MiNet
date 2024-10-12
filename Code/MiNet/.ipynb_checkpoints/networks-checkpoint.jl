@@ -4,59 +4,54 @@
 Sample N node degrees from a joint Poisson distribution with covariance λr. 
 """
 function joint_sample(N::Int64,λn::Float64,λp::Float64,λr::Float64)
-    #define distributions need + prod
-    dK = [Poisson(λn + λr), Poisson(λp + λr)]
-    #sample initial
-    #need
-    Kbi = rand(dK[1], N)
-    Kco = rand(dK[1], N)
-    #prod
-    Kbo = rand(dK[2], N)
-    Kci = rand(dK[2], N)
-
-    #while loop
-    n_eq, p_eq = 1,1
+    #inital sample
+    X = rand(Poisson(λn-λr),N)
+    Y = rand(Poisson(λp-λr),N)
+    R = rand(Poisson(λr),N)
     
-    while (n_eq != 0) || (p_eq != 0)
-        if n_eq != 0
-            #need
-            Kbi[rand(1:N)] = rand(dK[1])
-            Kco[rand(1:N)] = rand(dK[1])
-        end
-
-        if p_eq != 0
-            #prod
-            Kbo[rand(1:N)] = rand(dK[2])
-            Kci[rand(1:N)] = rand(dK[2])
-        end
-        #eval
-        n_eq = sum(Kbi) - sum(Kco)
-        p_eq = sum(Kbo) - sum(Kci)
-    end
+    #sample consumer degree
+    Kci = X .+ R
+    Kco = Y .+ R
     
-    return(Kbi, Kbo, Kci, Kco)
+    #get target degree sums
+    Sn = sum(Kci)
+    Sp = sum(Kco)
+    
+    #get degree sum
+    nR = rand(Truncated(Poisson(N*λr), 0, min(Sn, Sp)))
+    nX = Sp - nR
+    nY = Sn - nR 
+    
+    R_ = rand(Multinomial(nR, N))
+    X_ = rand(Multinomial(nX, N))
+    Y_ = rand(Multinomial(nY, N))
+    
+    Kmi = X_ .+ R_
+    Kmo = Y_ .+ R_
+    
+    return(Kci, Kco, Kmi, Kmo)
 end
 
-"""
-    joint_sample_cheat(N,λn,λp,λr)
+# """
+#     joint_sample_cheat(N,λn,λp,λr)
 
-Sample N node degrees from a joint Poisson distribution with covariance λr. 'cheats' by shuffling the sample. Should be ok with large N but not good for small networks. 
-"""
-function joint_sample_cheat(N::Int64,λn::Float64,λp::Float64,λr::Float64)
-    #define distributions
-    dK = [Poisson(λn + λr), 
-          Poisson(λp + λr)]
+# Sample N node degrees from a joint Poisson distribution with covariance λr. 'cheats' by shuffling the sample. Should be ok with large N but not good for small networks. 
+# """
+# function joint_sample_cheat(N::Int64,λn::Float64,λp::Float64,λr::Float64)
+#     #define distributions
+#     dK = [Poisson(λn + λr), 
+#           Poisson(λp + λr)]
     
-    #sample need
-    Kbi = rand(dK[1], N)
-    Kco = shuffle(Kbi)
+#     #sample need
+#     Kbi = rand(dK[1], N)
+#     Kco = shuffle(Kbi)
     
-    #sample prod
-    Kbo = rand(dK[2], N)
-    Kci = shuffle(Kbo)
+#     #sample prod
+#     Kbo = rand(dK[2], N)
+#     Kci = shuffle(Kbo)
     
-    return(Kbi, Kbo, Kci, Kco)
-end
+#     return(Kbi, Kbo, Kci, Kco)
+# end
 
 """
     generate_network(N,f, p...)
@@ -112,14 +107,15 @@ end
 
 Updates node states using simple rules. Consumers survive when all resources are present. Resources persist when any consumer makes them. sfix determines "fixed" nodes that are not updated. 
 """
-function update_state!(g::SimpleDiGraph{T}, s::Vector{Bool}, c::Vector{Bool},sfix::Vector{Bool} = fill(false, nv(g))) where T <: Int
+function update_state!(g::SimpleDiGraph{T}, s::Vector{Bool}, s0::Vector{Bool}, c::Vector{Bool},sfix::Vector{Bool} = fill(false, nv(g))) where T <: Int
+    s0 .= s 
     for i = shuffle(1:nv(g))
             if sfix[i]
                 s[i] = 1
             else
                 if c[i]
                     # println("con")
-                    @views s[i] = sum(s[g.badjlist[i]]) >= indegree(g)[i]
+                    @views s[i] = all(s[g.badjlist[i]])
                 else
                     # println("res")
                     @views s[i] = any(s[g.badjlist[i]]) 
@@ -129,34 +125,26 @@ function update_state!(g::SimpleDiGraph{T}, s::Vector{Bool}, c::Vector{Bool},sfi
 end
 
 """
-    get_state(g::SimpleDiGraph{T}, c::Vector{Bool}, ps::Float64; Nt = 100, ts = false) where T <: Int
+    get_state(g::SimpleDiGraph{T}, c::Vector{Bool}, ps::Float64) where T <: Int
 
-Initialise a network and itteratively solve for the steady state. Uses `update_state!` to update dynamics. Returns the state vector and the timeseries if `ts = true`
+Initialise a network and itteratively solve for the steady state. Uses `update_state!` to update dynamics. Returns the state vector.
 
 TODO: add supplied portion
 """
-function get_state(g::SimpleDiGraph{T}, c::Vector{Bool}, ps::Float64; Nt = 100, ts = false) where T <: Int
+function get_state(g::SimpleDiGraph{T}, c::Vector{Bool}, ps::Float64) where T <: Int
     #inital state
     s = fill(false, nv(g))
     s .= (rand(nv(g)) .< ps)
-    # sfix = deepcopy(s)
-    if ts
-        res = zeros(2,Nt)
-    end
-    for i = 1:Nt
-        if ts
-            res[1,i] = mean(s[c])
-            res[2,i] = mean(s[.!c])
-        end
-        update_state!(g, s, c)
-        
-    end
+    s0 = fill(false,nv(g))
 
-    if ts
-        return(s, res)
-    else
-        return(s)
+    #loop over time
+    while !all(s .== s0)
+        #update network state
+        update_state!(g, s, s0, c)
     end
+    
+    return(s)
+    
 end
 
 """
