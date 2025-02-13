@@ -6,7 +6,7 @@
    version="1.1"
    id="svg10602"
    sodipodi:docname="PhaseTrans_edited.svg"
-   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   inkscape:version="1.3 (0e150ed, 2023-07-21)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -21,14 +21,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="2.2995112"
-     inkscape:cx="175.25464"
-     inkscape:cy="336.81071"
-     inkscape:window-width="1920"
-     inkscape:window-height="1011"
+     inkscape:zoom="1.1497556"
+     inkscape:cx="174.38489"
+     inkscape:cy="224.39551"
+     inkscape:window-width="1392"
+     inkscape:window-height="963"
      inkscape:window-x="0"
-     inkscape:window-y="32"
-     inkscape:window-maximized="1"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
      inkscape:current-layer="svg10602" />
   <defs
      id="defs357">
@@ -13659,12 +13659,6 @@
      fill-opacity="1"
      d="M 153.910156 323.246094 L 156.464844 323.246094 L 156.464844 320.863281 L 153.910156 320.863281 Z M 153.910156 323.246094 "
      id="path2203" />
-  <path
-     fill-rule="nonzero"
-     fill="rgb(99.985999%, 100%, 100%)"
-     fill-opacity="1"
-     d="M 153.910156 321.863281 L 156.464844 321.863281 L 156.464844 319.480469 L 153.910156 319.480469 Z M 153.910156 321.863281 "
-     id="path2204" />
   <path
      fill-rule="nonzero"
      fill="rgb(99.985999%, 100%, 100%)"
@@ -64524,7 +64518,7 @@
   <g
      clip-path="url(#clip-253-7fd053f9)"
      id="g10559"
-     style="stroke-width:2.4;stroke-dasharray:none">
+     style="stroke-width:3;stroke-dasharray:none;fill:none;stroke:#94ba89;stroke-opacity:1">
     <path
        fill="none"
        stroke-width="2"
@@ -64535,12 +64529,12 @@
        stroke-miterlimit="2"
        d="M 130.355469 382.894531 L 131.90625 381.269531 L 133.460938 379.394531 L 135.011719 377.324219 L 136.5625 375.066406 L 138.117188 372.625 L 139.667969 369.996094 L 141.21875 367.171875 L 142.769531 364.152344 L 144.324219 360.921875 L 145.875 357.472656 L 147.425781 353.792969 L 148.980469 349.871094 L 150.53125 345.691406 L 152.082031 341.246094 L 153.636719 336.511719 L 155.1875 331.472656 L 156.738281 326.113281 L 158.292969 320.414062 L 159.84375 314.351562 L 161.394531 307.90625 L 162.945312 301.050781 L 164.5 293.757812 L 166.050781 286.003906 L 167.601562 277.761719 L 169.15625 268.992188 L 170.707031 259.671875 L 172.257812 249.753906 L 172.8125 246 "
        id="path10559"
-       style="stroke-width:2.4;stroke-dasharray:none" />
+       style="stroke-width:3;stroke-dasharray:none;fill:none;stroke:#94ba89;stroke-opacity:1" />
   </g>
   <g
      clip-path="url(#clip-254-7fd053f9)"
      id="g10560"
-     style="stroke-width:2.4;stroke-dasharray:none">
+     style="stroke-width:3;stroke-dasharray:none;stroke:#94ba89;stroke-opacity:1">
     <path
        fill="none"
        stroke-width="2"
@@ -64551,7 +64545,7 @@
        stroke-miterlimit="2"
        d="M 130.355469 382.894531 L 131.90625 381.707031 L 133.460938 380.65625 L 135.011719 379.683594 L 136.5625 378.773438 L 138.117188 377.914062 L 139.667969 377.09375 L 141.21875 376.308594 L 142.769531 375.554688 L 144.324219 374.832031 L 145.875 374.132812 L 147.425781 373.460938 L 148.980469 372.808594 L 150.53125 372.175781 L 152.082031 371.5625 L 153.636719 370.96875 L 155.1875 370.390625 L 156.738281 369.824219 L 158.292969 369.277344 L 159.84375 368.742188 L 161.394531 368.21875 L 162.945312 367.710938 L 164.5 367.210938 L 166.050781 366.722656 L 167.601562 366.246094 L 169.15625 365.78125 L 170.707031 365.324219 L 172.257812 364.878906 L 173.8125 364.4375 L 175.363281 364.007812 L 176.914062 363.585938 L 178.464844 363.175781 L 180.019531 362.769531 L 181.570312 362.367188 L 183.121094 361.976562 L 184.675781 361.589844 L 187.777344 360.839844 L 189.332031 360.472656 L 190.882812 360.113281 L 192.433594 359.757812 L 193.984375 359.410156 L 195.539062 359.066406 L 197.089844 358.726562 L 198.640625 358.394531 L 200.195312 358.066406 L 201.746094 357.742188 L 203.296875 357.421875 L 204.851562 357.109375 L 206.402344 356.796875 L 207.953125 356.492188 L 209.503906 356.191406 L 211.058594 355.890625 L 212.609375 355.597656 L 214.160156 355.308594 L 215.714844 355.019531 L 218.816406 354.457031 L 220.371094 354.183594 L 221.921875 353.910156 L 223.472656 353.640625 L 225.027344 353.375 L 226.578125 353.109375 L 229.679688 352.59375 L 231.234375 352.339844 L 232.785156 352.085938 L 234.335938 351.839844 L 235.890625 351.59375 L 237.441406 351.347656 L 238.992188 351.109375 L 240.546875 350.871094 L 243.648438 350.402344 L 245.199219 350.171875 L 246.753906 349.941406 L 248.304688 349.714844 L 249.855469 349.492188 L 251.410156 349.269531 L 254.511719 348.832031 L 256.066406 348.617188 L 260.71875 347.984375 L 262.273438 347.777344 L 263.824219 347.570312 L 265.375 347.367188 L 266.929688 347.167969 L 268.480469 346.964844 L 270.03125 346.769531 L 271.585938 346.570312 L 273.136719 346.375 L 276.238281 345.992188 L 277.792969 345.800781 L 280.894531 345.425781 L 282.449219 345.242188 L 284 345.058594 "
        id="path10560"
-       style="stroke-width:2.4;stroke-dasharray:none" />
+       style="stroke-width:3;stroke-dasharray:none;stroke:#94ba89;stroke-opacity:1" />
   </g>
   <g
      fill="#000000"
@@ -64716,7 +64710,8 @@
      stroke-opacity="1"
      stroke-miterlimit="2"
      d="M 85.03125 412 L 105.03125 412 "
-     id="path10576" />
+     id="path10576"
+     style="stroke:#94ba89;stroke-opacity:1;stroke-width:3;stroke-dasharray:none" />
   <g
      fill="rgb(0%, 0%, 0%)"
      fill-opacity="1"
@@ -65002,7 +64997,7 @@
      d="M 145.99734,162.61492 V 46.756715"
      id="path10604" />
   <path
-     style="font-variation-settings:normal;fill:none;fill-opacity:1;stroke:#337eaf;stroke-width:1.33333333;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker10608-0);stop-color:#000000"
+     style="font-variation-settings:normal;fill:none;fill-opacity:1;stroke:#337eaf;stroke-width:2.133;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker10608-0);stop-color:#000000"
      d="M 225.42168,369.97493 H 191.06014"
      id="path10604-2" />
   <path
@@ -65020,7 +65015,7 @@
      d="M 196.2332,89.656686 V 188.29574"
      id="path10609" />
   <path
-     style="font-variation-settings:normal;fill:none;fill-opacity:1;stroke:#e00202;stroke-width:1.33333333;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker10608-9);stop-color:#000000"
+     style="font-variation-settings:normal;fill:none;fill-opacity:1;stroke:#e00202;stroke-width:2.133;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker10608-9);stop-color:#000000"
      d="m 156.51474,349.7604 h 38.3539"
      id="path10609-6" />
   <path
@@ -65062,7 +65057,7 @@
        transform="translate(-3.2676277,24.056135)"><tspan
          x="-164.72461"
          y="104.53128"
-         id="tspan4">Community Diversity</tspan></text>
+         id="tspan1">Community Diversity</tspan></text>
     <text
        xml:space="preserve"
        id="text10612-6"
@@ -65070,7 +65065,7 @@
        transform="translate(-235.99568,25.477688)"><tspan
          x="-164.72461"
          y="104.53128"
-         id="tspan5">Metabolite Producers</tspan></text>
+         id="tspan2">Metabolite Producers</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Sans;-inkscape-font-specification:'Sans, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.33333;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker10608)"
@@ -65106,7 +65101,7 @@
        transform="rotate(90,-331.02897,-9.7642303)"><tspan
          x="-164.72461"
          y="104.53128"
-         id="tspan6">Consumer Requirements</tspan></text>
+         id="tspan3">Consumer Requirements</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Sans;-inkscape-font-specification:'Sans, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.33333;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker10608)"
@@ -65122,7 +65117,7 @@
    id="tspan10619">c</tspan></tspan></text>
   </g>
   <path
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:1.333;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1.33299994,1.33299994;stroke-dashoffset:0;stroke-opacity:1"
+     style="opacity:1;fill:none;fill-opacity:1;stroke:#737373;stroke-width:1.333;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1.33299994, 1.33299994;stroke-dashoffset:0;stroke-opacity:1"
      d="M 72.638897,358.64125 H 283.71422"
      id="path10619" />
 </svg>

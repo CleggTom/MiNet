@@ -13,8 +13,8 @@ end
 
 function empirical_PGF(x::Float64, p)
      v = 0
-    for i = size(p)
-        v += x[1]^(i-1) * p[i]
+    for k = eachindex(p)
+        v += x[1]^(k) * p[k]
     end
     return(v)
 end

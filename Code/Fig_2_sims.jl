@@ -38,7 +38,7 @@ s_vec = range(0.0, 0.99, length = n_s)
 n_s_network = 25
 s_vec_network = range(0.0, 0.99, length = n_s_network)
 
-N = 10000 #system size
+N = 1000 #system size
 n_r = 100 #number of system replicates
 n_rep = 1 #numer of simulation replicates
 
@@ -64,8 +64,8 @@ Threads.@threads for i = 1:n_s
         b0,c0 = MiNet.solve_arrival_probs(B,C)
         
         
-        b0_s_sols[i,j] = b0 
-        c0_s_sols[i,j] = c0
+        b0_s_sols[i,j] = (1-eb) * b0 
+        c0_s_sols[i,j] = ec + (1-ec) * c0
     
     end
 end
@@ -107,8 +107,8 @@ for r = 1:n_r
             for k = 1:n_rep
                 s_copy = MiNet.get_state(g_copy, c_copy, rand())
                 
-                b0_sim_sols[r,i,j,k] = mean(s_copy[c_copy])
-                c0_sim_sols[r,i,j,k] = mean(s_copy[.!c_copy])
+                b0_sim_sols[r,i,j,k] = sum(s_copy[c_copy]) / N
+                c0_sim_sols[r,i,j,k] = sum(s_copy[.!c_copy]) / N
             end
         end
     end

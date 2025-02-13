@@ -1,30 +1,30 @@
 """
-    joint_sample(N,λn,λp,λr)
+    joint_sample(N,zc,zm,r)
 
-Sample N node degrees from a joint Poisson distribution with covariance λr. 
+Sample N node degrees from a joint Poisson distribution with covariance r. 
 """
-function joint_sample(N::Int64,λn::Float64,λp::Float64,λr::Float64)
+function joint_sample(N::Int64,zc::Float64,zm::Float64,r::Float64)
     #inital sample
-    X = rand(Poisson(λn-λr),N)
-    Y = rand(Poisson(λp-λr),N)
-    R = rand(Poisson(λr),N)
+    X = rand(Poisson(zc-r),N)
+    Y = rand(Poisson(zm-r),N)
+    R = rand(Poisson(r),N)
     
     #sample consumer degree
     Kci = X .+ R
     Kco = Y .+ R
     
     #get target degree sums
-    Sn = sum(Kci)
-    Sp = sum(Kco)
+    Sc = sum(Kci)
+    Sm = sum(Kco)
     
     #get degree sum
-    nR = rand(Truncated(Poisson(N*λr), 0, min(Sn, Sp)))
-    nX = Sp - nR
-    nY = Sn - nR 
+    Sr = rand(Truncated(Poisson(N*r), 0, min(Sc, Sm)))
+    Sx = Sm - Sr
+    Sy = Sc - Sr 
     
-    R_ = rand(Multinomial(nR, N))
-    X_ = rand(Multinomial(nX, N))
-    Y_ = rand(Multinomial(nY, N))
+    R_ = rand(Multinomial(Sr, N))
+    X_ = rand(Multinomial(Sx, N))
+    Y_ = rand(Multinomial(Sy, N))
     
     Kmi = X_ .+ R_
     Kmo = Y_ .+ R_
@@ -32,66 +32,50 @@ function joint_sample(N::Int64,λn::Float64,λp::Float64,λr::Float64)
     return(Kci, Kco, Kmi, Kmo)
 end
 
-# """
-#     joint_sample_cheat(N,λn,λp,λr)
-
-# Sample N node degrees from a joint Poisson distribution with covariance λr. 'cheats' by shuffling the sample. Should be ok with large N but not good for small networks. 
-# """
-# function joint_sample_cheat(N::Int64,λn::Float64,λp::Float64,λr::Float64)
-#     #define distributions
-#     dK = [Poisson(λn + λr), 
-#           Poisson(λp + λr)]
-    
-#     #sample need
-#     Kbi = rand(dK[1], N)
-#     Kco = shuffle(Kbi)
-    
-#     #sample prod
-#     Kbo = rand(dK[2], N)
-#     Kci = shuffle(Kbo)
-    
-#     return(Kbi, Kbo, Kci, Kco)
-# end
-
 """
     generate_network(N,f, p...)
 
 Generate random network with component sizes N drawing the joint degrees from function f with parameters p.
 """
 function generate_network(N::Int64, f::Function, p...)
-    Kbi, Kbo, Kci, Kco = f(N,p...)
+    Kci, Kco, Kmi, Kmo = f(N,p...)
     
     # println(mean(Kbi)," ",mean(Kco))
     # println(mean(Kbo)," ",mean(Kci))
     
-    @assert sum(Kbi) == sum(Kco)
-    @assert sum(Kbo) == sum(Kci)
+    @assert sum(Kci) == sum(Kmo)
+    @assert sum(Kco) == sum(Kmi)
 
     #assign graph
     g = DiGraph(2N)
     
-    #get vertex need degree sequences
+    #get vertex need degree sequences m -> c
     begin
-        vb_seq = inverse_rle(1:N, Kbi)
-        vc_seq = inverse_rle((N+1):(2N), Kco)
+        vc_seq = inverse_rle(1:N, Kci)
+        vm_seq = inverse_rle((N+1):(2N), Kmo)
         
         #permutate to create random pairs
-        l_n = Pair.(shuffle(vc_seq), shuffle(vb_seq))
+        l_n = Pair.(shuffle(vm_seq), shuffle(vc_seq))
         add_edge!.(Ref(g), l_n)
     end
     
-    #get vertex produce degree sequences
+    #get vertex produce degree sequences c -> m
     begin
-        vb_seq = inverse_rle(1:N, Kbo)
-        vc_seq = inverse_rle((N+1):(2N), Kci)
+        vc_seq = inverse_rle(1:N, Kco)
+        vm_seq = inverse_rle((N+1):(2N), Kmi)
         
         #permutate to create random pairs
-        l_p = Pair.(shuffle(vb_seq), shuffle(vc_seq))
+        l_p = Pair.(shuffle(vc_seq), shuffle(vm_seq))
         add_edge!.(Ref(g), l_p)
     end
     return(g)
 end
 
+"""
+    update_node!(g::SimpleDiGraph{T}, s::Vector{Bool},c::Vector{Bool},i::Int) where T <: Int
+
+Update a node i state in cross-feeding network g 
+"""
 function update_node!(g::SimpleDiGraph{T}, s::Vector{Bool},c::Vector{Bool},i::Int) where T <: Int
     if c[i]
         # println("con")
@@ -103,9 +87,9 @@ function update_node!(g::SimpleDiGraph{T}, s::Vector{Bool},c::Vector{Bool},i::In
 end
 
 """
-    update_state!(g,s,c,sfix = falses(nv(g)))
+    update_state!(g,s,c, sfix = falses(nv(g)))
 
-Updates node states using simple rules. Consumers survive when all resources are present. Resources persist when any consumer makes them. sfix determines "fixed" nodes that are not updated. 
+Updates node states using simple rules. Consumers survive when all resources are present. Resources persist when aSy consumer makes them. sfix determines "fixed" nodes that are not updated. 
 """
 function update_state!(g::SimpleDiGraph{T}, s::Vector{Bool}, s0::Vector{Bool}, c::Vector{Bool},sfix::Vector{Bool} = fill(false, nv(g))) where T <: Int
     s0 .= s 
@@ -113,13 +97,7 @@ function update_state!(g::SimpleDiGraph{T}, s::Vector{Bool}, s0::Vector{Bool}, c
             if sfix[i]
                 s[i] = 1
             else
-                if c[i]
-                    # println("con")
-                    @views s[i] = all(s[g.badjlist[i]])
-                else
-                    # println("res")
-                    @views s[i] = any(s[g.badjlist[i]]) 
-                end
+                update_node!(g,s,c,i)
             end
         end
 end
