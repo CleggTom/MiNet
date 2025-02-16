@@ -9,7 +9,7 @@ module MiNet
 
     include("./analytics.jl")
     include("./networks.jl")
-    include("./dynamics.jl")
+    # include("./dynamics.jl")
     include("./utils.jl")
     include("./powerlaw.jl")
 

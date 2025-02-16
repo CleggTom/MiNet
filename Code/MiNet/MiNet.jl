@@ -7,10 +7,8 @@ module MiNet
     using Graphs
     using StatsBase
 
-    include("./analytics.jl")
-    include("./networks.jl")
-    # include("./dynamics.jl")
-    include("./utils.jl")
-    include("./powerlaw.jl")
+    include("./analytics.jl") #analytical results
+    include("./networks.jl") #generation and simulation of networks
+    include("./utils.jl") #utility functions
 
 end

@@ -1,55 +1,53 @@
 """
-    arrival_prop_funcs(B::Function,C::Function)
+    arrival_prop_funcs(C::Function,M::Function)
 
-takes functions B and C describing the joint in/out degree distributions for consumers and resources and returns the functions to calculate the probability of arriving at a surviving node.
+Takes generating functions C and M describing the joint in/out degree distributions for consumers and resources and returns the functions to calculate the probability of arriving at a surviving node.
 """
-function arrival_prop_funcs(B::Function,C::Function)
+function arrival_prop_funcs(C::Function,M::Function)
     #get required functions
     #derivatives evaluated at 1
-    dBY(X) = ForwardDiff.gradient(B, [X, 1.0])[2] #Ko * P(Ki,Ko) * X^Ki
-    # dBX(Y) = ForwardDiff.gradient(B, [1.0, Y])[1] #Ki * P(Ki,Ko) * Y^Ko
-
-    dCY(X) = ForwardDiff.gradient(C, [X, 1.0])[2]
-    # dCX(Y) = ForwardDiff.gradient(C, [1.0, Y])[1]
+    dCY(X) = ForwardDiff.gradient(C, [X, 1.0])[2] #Ko * P(Ki,Ko) * X^Ki
+    dMY(X) = ForwardDiff.gradient(M, [X, 1.0])[2]
 
     #arrival degree - normalised by mean
-    B1_I(X) = dBY(X) / dBY(1.0) #Ko * P(Ki,Ko) * X^Ki / #Ko * P(Ki,Ko)
-    C1_I(X) = dCY(X) / dCY(1.0)
+    C1_I(X) = dCY(X) / dCY(1.0) #Ko * P(Ki,Ko) * X^Ki / #Ko * P(Ki,Ko)
+    M1_I(X) = dMY(X) / dMY(1.0)
 
     #actual probability functions
-    fb(c1) = B1_I(c1)
-    fc(b1) = 1 - C1_I(1-b1)
+    fc(m1) = M1_I(m1)
+    fm(c1) = 1 - C1_I(1-c1)
 
-    return Dict(:b => fb, :c => fc)
+    return Dict(:c => fc, :m => fm)
 end
 
 """
-    solve_arrival_probs(B,C,sb,sc)
+    solve_arrival_probs(C,M,sc,sm)
 
-Solve the eqations B and C to get the solutions for survivng propotions. Also accepts arguments sb and sc for the proportion of supplied resources or consumers.
+Solve the eqations C and M to get the solutions for survivng propotions. Also accepts arguments sb and sc for the proportion of supplied resources or consumers.
 """
-function solve_arrival_probs(B,C)
-    f_sol = arrival_prop_funcs(B,C)
+function solve_arrival_probs(C,M)
+    f_sol = arrival_prop_funcs(C,M)
         
-    b1(x) = f_sol[:b](f_sol[:c](x)) - x
-    b1_sols = Roots.find_zeros(b1, 0.0, 1.0)
-    c1_sols = f_sol[:c].(b1_sols)
-    b0_sols = [ B([c, 1]) for c = c1_sols]
-    c0_sols = [1 - C([1 - b, 1]) for b = b1_sols]
+    c1(x) = f_sol[:c](f_sol[:m](x)) - x
+    c1_sols = Roots.find_zeros(c1, 0.0, 1.0)
+    m1_sols = f_sol[:m].(c1_sols)
+    
+    c0_sols = [ C([m, 1]) for m = m1_sols]
+    m0_sols = [1 - M([1 - c, 1]) for c = c1_sols]
 
-    return b0_sols, c0_sols
+    return c0_sols, m0_sols
 end
 
 """
-    bifurcation_manifold(λc)
+    bifurcation_manifold(zc)
 
-    get the manifold separating the cusp bifurcation as a function of λc (resource in degree).
+    get the manifold separating the cusp bifurcation as a function of zm (resource in degree).
 """
-function bifurcation_manifold(λc)
-    W0 = lambertw(-1 / (λc), 0)
-    W1 = lambertw(-1 / (λc), -1)
+function bifurcation_manifold(zm)
+    W0 = lambertw(-1 / (zm), 0)
+    W1 = lambertw(-1 / (zm), -1)
     
-    λb0 = -W0 / exp(1 / W0)
-    λb1 = -W1 / exp(1 / W1)
-    return([λb0,λb1])
+    λc0 = -W0 / exp(1 / W0)
+    λc1 = -W1 / exp(1 / W1)
+    return([λc0,λc1])
 end

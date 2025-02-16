@@ -107,7 +107,6 @@ end
 
 Initialise a network and itteratively solve for the steady state. Uses `update_state!` to update dynamics. Returns the state vector.
 
-TODO: add supplied portion
 """
 function get_state(g::SimpleDiGraph{T}, c::Vector{Bool}, ps::Float64) where T <: Int
     #inital state
